@@ -13,13 +13,23 @@ class Wallet:
 
     def __init__(self, initial_balance = 0):
         """Inits a wallet."""
-        self.public_key, self.private_key = self.generate_key_pair()
+        self._public_key, self._private_key = self.generate_key_pair()
         self.balance = initial_balance
         self.transactions = []
 
     def __str__(self):
         """Returns a string representation of the wallet."""
         return str(self.__class__) + ": " + str(self.__dict__)
+
+    @property
+    def public_key(self):
+        """So that the public key of the wallet does not change externally."""
+        return self._public_key
+
+    @property
+    def private_key(self):
+        """So that the private key of the wallet does not change externally."""
+        return self._private_key
 
 # ======================================================================================================================================================
 # Wallet's Cryptographic Operations
