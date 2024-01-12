@@ -7,6 +7,7 @@ class Wallet:
     Attributes:
         public_key (str): the public key of the wallet (also serves as the address of the wallet).
         private_key (str): the private key of the wallet.
+        last_nonce (int): a counter that maintains the number of the distinct transactions that the wallet has created as a sender.
         balance (int): the total balance of the wallet.
         transactions (list): the transactions of the wallet.
     """
@@ -14,6 +15,7 @@ class Wallet:
     def __init__(self, initial_balance = 0):
         """Inits a wallet."""
         self._public_key, self._private_key = self.generate_key_pair()
+        self.last_nonce = 0
         self.balance = initial_balance
         self.transactions = []
 
@@ -30,6 +32,13 @@ class Wallet:
     def private_key(self):
         """So that the private key of the wallet does not change externally."""
         return self._private_key
+
+    def get_next_nonce(self):
+        """Returns the last given nonce to the last transaction created by the self sender wallet."""
+        # Called by class transaction to update node.wallet.transaction.nonce
+        # every time the self sender wallet creates a new transaction.
+        self.last_nonce += 1
+        return self.last_nonce
 
 # ======================================================================================================================================================
 # Wallet's Cryptographic Operations
