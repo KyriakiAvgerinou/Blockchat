@@ -50,7 +50,7 @@ class Transaction:
             "type": self.type,
             "bcc": self.bcc,
             "message": self.message,
-            "timestamp": self.timestamp
+            "timestamp": self.timestamp,
         }
 
     def get_hash(self):
