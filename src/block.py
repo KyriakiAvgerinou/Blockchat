@@ -51,9 +51,9 @@ class Block:
             if len(self.transactions) < config.block_capacity:
                 self.transactions.append(transaction)
             else:
-                raise BlockCapacityError("Block capacity exceeded. The addition is declined.")
+                raise BlockCapacityError("Block capacity exceeded. The addition of the transaction is declined.")
         except BlockCapacityError as e:
-            # print(f"{e}")
+            print(f"{e}")
             return False
         return True
 
