@@ -1,6 +1,7 @@
 from libraries.module_library import calculate_hash
 from transaction import Transaction
 from time import time
+from libraries.custom_exceptions import BlockCapacityError
 
 class Block:
     """
@@ -45,8 +46,15 @@ class Block:
 
     def add_transaction(self, transaction, capacity):
         """Adds a new transaction to the block."""
-        if len(self.transactions) < capacity:
-            self.transactions.append(transaction)
+        try:
+            if len(self.transactions) < capacity:
+                self.transactions.append(transaction)
+            else:
+                raise BlockCapacityError("Block capacity exceeded. The addition is declined.")
+        except BlockCapacityError as e:
+            # print(f"{e}")
+            return False
+        return True
 
     def update_index(self, old_index):
         """Updates the index of the block just before it enters the blockchain."""
