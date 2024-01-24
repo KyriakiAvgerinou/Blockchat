@@ -29,8 +29,8 @@ class Blockchain:
     def add_block(self, block):
         """Adds a new, validated block into the blockchain."""
         initial_block_hash = block.hash
-        block.update_index(self.blocks[-1].index)
-        block.update_previous_hash(self.blocks[-1].hash)
+        block.update_index(self.blocks[-1])
+        block.update_previous_hash(self.blocks[-1])
         block.get_new_hash()
         if block.is_valid():
             self.blocks.append(block)

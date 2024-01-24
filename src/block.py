@@ -56,9 +56,9 @@ class Block:
             return False
         return True
 
-    def update_index(self, old_index):
+    def update_index(self, previous_block):
         """Updates the index of the block just before it enters the blockchain."""
-        new_index = old_index + 1
+        new_index = previous_block.index + 1
         self.index = new_index
 
     def update_previous_hash(self, previous_block):
