@@ -1,3 +1,8 @@
+# All nodes in the network know the ip address
+# and the port of the bootstrap node.
+BOOTSTRAP_IP = "127.0.0.1"
+BOOTSTRAP_PORT = "5000"
+
 block_capacity = 5 # default value for the capacity of the blocks
 total_nodes = 0 # initialize the total number of nodes in the network
 
