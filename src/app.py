@@ -1,8 +1,7 @@
 from flask import Flask
-from endpoints import blockchat_bp
+from endpoints import node, blockchat_bp
 from argparse import ArgumentParser
 import config
-from node import Node
 from blockchain import Blockchain
 
 app = Flask(__name__) # initialize the application
@@ -38,9 +37,11 @@ if __name__ == "__main__":
             - deposit 1000 * (the total number of nodes in the network) BCC in the bootstrap's wallet,
             - initiate the blockchain and generate the genesis block.
         """
-        node = Node(config.BOOTSTRAP_IP, config.BOOTSTRAP_PORT, 1000*config.total_nodes)
         node.id = 0
+        node.ip = config.BOOTSTRAP_IP
+        node.port = config.BOOTSTRAP_PORT
         node.is_bootstrap = True
+        node.wallet.balance = 1000 * config.total_nodes
         node.register_node_to_ring(node.id, node.ip, node.port, node.wallet.public_key)
         blockchain = Blockchain(node) # in the initialization of the blockchain, the genesis block is automatically generated
         app.run(debug = True, host = node.ip, port = node.port) # run the Flask development server and specify the ip address and port on which the Flask server should listen
