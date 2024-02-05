@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from node import Node
+import pickle
 
 # Init the current node.
 node = Node()
@@ -34,3 +35,12 @@ def get_ring():
         - Send the current ring of nodes.
     """
     return jsonify({"ring": node.ring})
+
+@blockchat_bp.route("/post_ring", methods = ["POST"])
+def post_ring():
+    """
+    Called for all the nodes in the network, except for the bootstrap node.
+    Updates the ring of the current node with the final ring of nodes in the network.
+    """
+    node.ring = pickle.loads(request.get_data())
+    return jsonify({"message": f"Update node {node.id} ring successful."})
