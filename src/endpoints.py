@@ -26,3 +26,11 @@ def register_node():
 
     # Return the id of the new node.
     return jsonify({"id": new_node_id})
+
+@blockchat_bp.route("/get_ring", methods = ["GET"])
+def get_ring():
+    """
+    Request to the bootstrap node only:
+        - Send the current ring of nodes.
+    """
+    return jsonify({"ring": node.ring})
