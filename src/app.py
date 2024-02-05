@@ -4,6 +4,10 @@ from argparse import ArgumentParser
 import config
 from blockchain import Blockchain
 
+# Get the ip address and the port of the bootstrap node defined by the config file.
+BOOTSTRAP_IP = config.BOOTSTRAP_IP
+BOOTSTRAP_PORT = config.BOOTSTRAP_PORT
+
 app = Flask(__name__) # initialize the application
 app.register_blueprint(blockchat_bp, url_prefix = "/blockchat") # register blockchat_bp blueprint
 
@@ -26,6 +30,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     port = args.port # get the port
     config.set_total_nodes(args.nodes) # set the global variable total_nodes
+    total_nodes = config.total_nodes
     config.set_block_capacity(args.capacity) # set the global variable block_capacity
     is_bootstrap = args.bootstrap # get whether the node is the bootstrap
 
@@ -38,10 +43,10 @@ if __name__ == "__main__":
             - initiate the blockchain and generate the genesis block.
         """
         node.id = 0
-        node.ip = config.BOOTSTRAP_IP
-        node.port = config.BOOTSTRAP_PORT
+        node.ip = BOOTSTRAP_IP
+        node.port = BOOTSTRAP_PORT
         node.is_bootstrap = True
-        node.wallet.balance = 1000 * config.total_nodes
+        node.wallet.balance = 1000 * total_nodes
         node.register_node_to_ring(node.id, node.ip, node.port, node.wallet.public_key)
         blockchain = Blockchain(node) # in the initialization of the blockchain, the genesis block is automatically generated
         app.run(debug = True, host = node.ip, port = node.port) # run the Flask development server and specify the ip address and port on which the Flask server should listen
