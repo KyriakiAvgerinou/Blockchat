@@ -48,7 +48,7 @@ if __name__ == "__main__":
         node.is_bootstrap = True
         node.wallet.balance = 1000 * total_nodes
         node.register_node_to_ring(node.id, node.ip, node.port, node.wallet.public_key)
-        blockchain = Blockchain(node) # in the initialization of the blockchain, the genesis block is automatically generated
+        node.chain = Blockchain(node) # in the initialization of the blockchain, the genesis block is automatically generated
         # app.run(debug = True, host = node.ip, port = node.port)
         app.run(host = node.ip, port = node.port) # run the Flask development server and specify the ip address and port on which the Flask server should listen
     else:
