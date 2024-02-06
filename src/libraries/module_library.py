@@ -1,5 +1,6 @@
 import hashlib
 import json
+import requests
 
 def to_json(obj):
     """Converts the given object into a json string."""
@@ -9,3 +10,15 @@ def calculate_hash(obj):
     """Calculates and returns a hash for the given object."""
     hash = hashlib.sha256(to_json(obj).encode()).hexdigest()
     return hash
+
+def make_get_request(ip, port, endpoint):
+    """Makes a GET request to http://{ip}:{port}/blockchat/{endpoint} and returns the response."""
+    url = f"http://{ip}:{port}/blockchat/{endpoint}"
+    response = requests.get(url)
+    return response
+
+def make_post_request(ip, port, endpoint, data = None):
+    """Makes a POST request to http://{ip}:{port}/blockchat/{endpoint} with the given data and returns the response."""
+    url = f"http://{ip}:{port}/blockchat/{endpoint}"
+    response = requests.post(url, data)
+    return response
