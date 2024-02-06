@@ -44,3 +44,20 @@ def post_ring():
     """
     node.ring = pickle.loads(request.get_data())
     return jsonify({"message": f"Update node {node.id} ring successful."})
+
+@blockchat_bp.route("/ask_chain", methods = ["POST"])
+def ask_chain():
+    """
+    The requesting node asks the receiving node for their self.chain.
+    """
+    requesting_node = pickle.loads(request.get_data())
+    node.share_chain(requesting_node)
+    return jsonify({"message": f"Update node {requesting_node['id']} chain from node {node.id} successful."})
+
+@blockchat_bp.route("/post_chain", methods = ["POST"])
+def post_chain():
+    """
+    Updates the chain of the current node with the given blockchain.
+    """
+    node.chain = pickle.loads(request.get_data())
+    return jsonify({"message": f"Update node {node.id} chain successful."})
