@@ -7,6 +7,7 @@ import socket
 import pickle
 import threading
 from libraries.module_library import make_get_request, make_post_request
+from libraries.custom_exceptions import SessionInitializationError
 
 # Get the ip address and the port of the bootstrap node defined by the config file.
 BOOTSTRAP_IP = config.BOOTSTRAP_IP
@@ -24,28 +25,38 @@ if __name__ == "__main__":
 
     # Retrieve the port for the incoming HTTP requests.
     required.add_argument("-prt", "--port", type = int, help = "insert port for incoming HTTP requests", required = True)
-    # Retrieve the total number of nodes participating in the network.
-    required.add_argument("-nds", "--nodes", type = int, choices = [5, 10], help = "insert total number of nodes in the network", required = True)
-    # Retrieve the transaction capacity of the blocks.
-    required.add_argument("--capacity", type = int, choices = [5, 10, 20], help = "insert block capacity", required = True)
+    # Retrieve the total number of nodes participating in the network. This is defined by the bootstrap node only.
+    optional.add_argument("-nds", "--nodes", type = int, choices = [5, 10], help = "insert total number of nodes in the network")
+    # Retrieve the transaction capacity of the blocks. This is defined by the bootstrap node only.
+    optional.add_argument("--capacity", type = int, choices = [5, 10, 20], help = "insert block capacity")
     # Retrieve whether the current node is the bootstrap node.
     optional.add_argument("-btstrp", "--bootstrap", action = "store_true", help = "insert if the current node is the bootstrap")
 
     args = parser.parse_args()
     port = args.port # get the port
-    config.set_total_nodes(args.nodes) # set the global variable total_nodes
-    total_nodes = config.total_nodes
-    config.set_block_capacity(args.capacity) # set the global variable block_capacity
+    nodes = args.nodes # temporarily hold args.nodes
+    capacity = args.capacity # temporarily hold args.capacity
     is_bootstrap = args.bootstrap # get whether the node is the bootstrap
 
     if is_bootstrap:
         """
         If the current node is the bootstrap node:
+            - set the global variables total_nodes and block_capacity in the bootstrap's installation.
+            Also:
             - Initiate the bootstrap node (id = 0, ip = config.BOOTSTRAP_IP, port = config.BOOTSTRAP_PORT, is_bootstrap = True),
             - register the bootstrap node in the ring,
             - deposit 1000 * (the total number of nodes in the network) BCC in the bootstrap's wallet,
             - initiate the blockchain and generate the genesis block.
         """
+
+        # Check that the total number of nodes and the block capacity have been specified in the command-line arguments.
+        if nodes is None or capacity is None:
+            raise SessionInitializationError("It is mandatory for the bootstrap node to specify the total number of nodes and the block capacity.")
+
+        config.set_total_nodes(nodes) # set the global variable total_nodes
+        total_nodes = config.total_nodes
+        config.set_block_capacity(capacity) # set the global variable block_capacity
+
         node.id = 0
         node.ip = BOOTSTRAP_IP
         node.port = BOOTSTRAP_PORT
@@ -60,6 +71,7 @@ if __name__ == "__main__":
         If the current node is not the bootstrap node:
             - Initiate the current node,
             - ask the bootstrap node to register them, add them to the ring of nodes and give them their id.
+        If the registration is successful, retrieve the total number of nodes and the block capacity from the bootstrap node.
         If the current node is the last one to enter the network:
             - send bootstrap's FINAL ring of nodes to all the nodes in the network,
             - send bootstrap's initial version of the blockchain to all the nodes in the network.
@@ -82,6 +94,19 @@ if __name__ == "__main__":
 
         # Retrieve the id for the current node.
         node.id = registration_response.json()["id"]
+
+        # Retrieve the total number of nodes from the bootstrap node.
+        nodes = make_get_request(BOOTSTRAP_IP, BOOTSTRAP_PORT, endpoint = "get_total_nodes")
+        nodes = nodes.json()["total_nodes"]
+        # Set the global variable total_nodes in the current node's installation.
+        config.set_total_nodes(nodes)
+        total_nodes = config.total_nodes
+
+        # Retrieve block capacity from the bootstrap node.
+        capacity = make_get_request(BOOTSTRAP_IP, BOOTSTRAP_PORT, endpoint = "get_block_capacity")
+        capacity = capacity.json()["block_capacity"]
+        # Set the global variable block_capacity in the current node's installation.
+        config.set_block_capacity(capacity)
 
         # If the current node is the last one to enter the network,
         # send the final ring of nodes and the initial blockchain with only the genesis block

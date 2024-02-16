@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from node import Node
 import pickle
+import config
 
 # Init the current node.
 node = Node()
@@ -61,3 +62,17 @@ def post_chain():
     """
     node.chain = pickle.loads(request.get_data())
     return jsonify({"message": f"Update node {node.id} chain successful."})
+
+@blockchat_bp.route("/get_total_nodes", methods = ["GET"])
+def get_total_nodes():
+    """
+    Get config.total_nodes from the current installation.
+    """
+    return jsonify({"total_nodes": config.total_nodes})
+
+@blockchat_bp.route("/get_block_capacity", methods = ["GET"])
+def get_block_capacity():
+    """
+    Get config.block_capacity from the current installation.
+    """
+    return jsonify({"block_capacity": config.block_capacity})
