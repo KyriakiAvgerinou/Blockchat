@@ -22,7 +22,7 @@ class Transaction:
     def __init__(self, sender, recipient_id, recipient_public_key, bcc = None, message = None):
         """Initiates a transaction."""
         self.sender = sender # sender node
-        self.nonce = self.sender.wallet.get_next_nonce()
+        self.nonce = None
         self.recipient_id = recipient_id
         self.recipient_public_key = recipient_public_key
         self.bcc = bcc
@@ -48,7 +48,6 @@ class Transaction:
         return {
             "sender_public_key": self.sender.wallet.public_key,
             "recipient_public_key": self.recipient_public_key,
-            "nonce": self.nonce,
             "type": self.type,
             "bcc": self.bcc,
             "message": self.message,
@@ -63,3 +62,12 @@ class Transaction:
         """Signs the hash of the self transaction using the private key of the sender node (the private key of the wallet of the sender node)."""
         if self.signature == bytes():
             self.signature = self.sender.wallet.sign_data(self.hash)
+
+    def update_nonce(self):
+        """
+        Updates the nonce of the transaction.
+        It is called once the transaction is validated by all the nodes in the network
+        and the transaction is ready to be added to the sender's wallet.
+        """
+        if self.nonce is None:
+            self.nonce = self.sender.wallet.get_next_nonce()
