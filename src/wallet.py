@@ -1,4 +1,5 @@
 import rsa
+from libraries.custom_exceptions import InsufficientBalanceError
 
 class Wallet:
     """
@@ -39,6 +40,17 @@ class Wallet:
         # every time the self sender wallet creates a new transaction.
         self.last_nonce += 1
         return self.last_nonce
+
+    def update_balance(self, amount):
+        """
+        Updates the balance of the self wallet.
+        If you wish to subtract the amount from the balance,
+        pass a negative value for the amount parameter.
+        """
+        if self.balance + amount >= 0:
+            self.balance += amount
+        else:
+            raise InsufficientBalanceError("The projected balance is negative. Balance update rejected.")
 
 # ======================================================================================================================================================
 # Wallet's Cryptographic Operations

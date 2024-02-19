@@ -1,5 +1,4 @@
-from libraries.module_library import calculate_hash
-from node import Node
+from libraries.module_library import calculate_hash, transaction_total_expenses
 from time import time
 import rsa
 
@@ -80,3 +79,7 @@ class Transaction:
         """
         if self.nonce is None:
             self.nonce = self.sender.wallet.get_next_nonce()
+
+    def total_expenses(self):
+        """Returns the total expenses of the transaction."""
+        return transaction_total_expenses(self.bcc, self.message)
