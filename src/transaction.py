@@ -10,7 +10,8 @@ class Transaction:
         hash (str): the hash of the transaction.
         sender (Node object): the sender node object.
         nonce (int): the nonce of the transaction - number used only once - comes from the wallet of the sender node.
-        recipient (Node object): the recipient node object.
+        recipient_id (int): the id of the recipient node.
+        recipient_public_key (str): the public key of the recipient node.
         bcc (int): the amount of coins to transfer.
         message (str): the message to transfer.
         type (str): the type of the transaction --> 'coins' or 'message'. If both coins and a message are transferred, then self.type = 'coins'.
@@ -18,11 +19,12 @@ class Transaction:
         timestamp (float): the timestamp when the transaction was created.
     """
 
-    def __init__(self, sender, recipient, bcc = None, message = None):
+    def __init__(self, sender, recipient_id, recipient_public_key, bcc = None, message = None):
         """Initiates a transaction."""
         self.sender = sender # sender node
         self.nonce = self.sender.wallet.get_next_nonce()
-        self.recipient = recipient # recipient node
+        self.recipient_id = recipient_id
+        self.recipient_public_key = recipient_public_key
         self.bcc = bcc
         self.message = message
         if self.bcc:
@@ -45,7 +47,7 @@ class Transaction:
         # We merely include the attributes that uniquely identify the transaction and are not expected to change once the transaction is created.
         return {
             "sender_public_key": self.sender.wallet.public_key,
-            "recipient_public_key": self.recipient.wallet.public_key,
+            "recipient_public_key": self.recipient_public_key,
             "nonce": self.nonce,
             "type": self.type,
             "bcc": self.bcc,
