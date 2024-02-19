@@ -1,6 +1,7 @@
 from libraries.module_library import calculate_hash
 from node import Node
 from time import time
+import rsa
 
 class Transaction:
     """
@@ -62,6 +63,14 @@ class Transaction:
         """Signs the hash of the self transaction using the private key of the sender node (the private key of the wallet of the sender node)."""
         if self.signature == bytes():
             self.signature = self.sender.wallet.sign_data(self.hash)
+
+    def verify_signature(self, data):
+        """Verifies the signature of the transaction."""
+        try:
+            rsa.verify(data.encode(), self.signature, rsa.PublicKey.load_pkcs1(self.sender.wallet.public_key))
+            return True
+        except rsa.VerificationError:
+            return False
 
     def update_nonce(self):
         """

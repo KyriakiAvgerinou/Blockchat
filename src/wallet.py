@@ -54,11 +54,11 @@ class Wallet:
         signature = rsa.sign(data.encode(), rsa.PrivateKey.load_pkcs1(self.private_key), "SHA-256")
         return signature
 
-    def verify_signature(self, data, signature, public_key):
-        """Verifies whether the signature on the given piece of data derives from the wallet with the given public key (True) or not (False).
-            It also detects whether the given data has been altered or tampered with."""
-        try:
-            rsa.verify(data.encode(), signature, rsa.PublicKey.load_pkcs1(public_key))
-            return True
-        except rsa.VerificationError:
-            return False
+    #def verify_signature(self, data, signature, public_key):
+    #    """Verifies whether the signature on the given piece of data derives from the wallet with the given public key (True) or not (False).
+    #        It also detects whether the given data has been altered or tampered with."""
+    #    try:
+    #        rsa.verify(data.encode(), signature, rsa.PublicKey.load_pkcs1(public_key))
+    #        return True
+    #    except rsa.VerificationError:
+    #        return False
