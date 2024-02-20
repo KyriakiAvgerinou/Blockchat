@@ -48,3 +48,13 @@ def retrieve_from_ring_node(ring, ring_node_id, request):
                 return ring_node["public_key"]
             else:
                 raise ValueError("Request back only 'ip', 'port' or 'public_key'.")
+
+def standardize_transaction_input(recipient_id, bcc = None, message = None):
+    """Standardizes the input data for the 'blockchat/make_transaction' endpoint."""
+    if bcc is None and message is None:
+        raise TypeError("You should input at least one quantity for the transaction, either coins or a message.")
+    return {
+        "recipient_id": recipient_id,
+        "bcc": bcc,
+        "message": message
+    }
