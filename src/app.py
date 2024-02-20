@@ -6,7 +6,7 @@ from blockchain import Blockchain
 import socket
 import pickle
 import threading
-from libraries.module_library import make_get_request, make_post_request
+from libraries.module_library import make_get_request, make_post_request, standardize_transaction_input
 from libraries.custom_exceptions import SessionInitializationError
 
 # Get the ip address and the port of the bootstrap node defined by the config file.
@@ -74,7 +74,8 @@ if __name__ == "__main__":
         If the registration is successful, retrieve the total number of nodes and the block capacity from the bootstrap node.
         If the current node is the last one to enter the network:
             - send bootstrap's FINAL ring of nodes to all the nodes in the network,
-            - send bootstrap's initial version of the blockchain to all the nodes in the network.
+            - send bootstrap's initial version of the blockchain to all the nodes in the network,
+            - send 1000 BCC to every node in the network.
         """
         # Get the ip address of the device.
         hostname = socket.gethostname()
@@ -132,6 +133,26 @@ if __name__ == "__main__":
                     post_chain_response = make_post_request(BOOTSTRAP_IP, BOOTSTRAP_PORT, endpoint = "ask_chain", data = pickle.dumps(ring_node))
                     print(post_ring_response.json()["message"])
                     print(post_chain_response.json()["message"])
+
+                # Now that everyone in the network has the ring and the initial image of the blockchain,
+                # the bootstrap will send everyone 1000 BCC,
+                # so that we can get started.
+                for ring_node in bootstrap_ring[1:]:
+                    transaction_data = standardize_transaction_input(
+                        recipient_id = ring_node["id"],
+                        bcc = 1000,
+                        message = "Here's your first 1000 BCC from the bootstrap node <3."
+                    )
+                    transaction_response = make_post_request(BOOTSTRAP_IP, BOOTSTRAP_PORT, endpoint = "make_transaction", data = transaction_data)
+                    print(transaction_response.json()["message"].encode("utf-8"))
+
+                # This is for testing the code.
+                # Print out the balance of every node after the previous transactions.
+                # for ring_node in bootstrap_ring:
+                #    print(ring_node["id"])
+                #    current_balance_response = make_get_request(ring_node["ip"], ring_node["port"], endpoint = "get_balance")
+                #    print(current_balance_response.json()["current_balance"])
+
             req = threading.Thread(target = thread_function, args = ())
             req.start()
 
