@@ -1,5 +1,5 @@
 from wallet import Wallet
-from libraries.module_library import make_post_request, transaction_total_expenses, calculate_hash, retrieve_from_ring_node
+from libraries.functions_library import make_post_request, transaction_total_expenses, calculate_hash, retrieve_from_ring_node
 import pickle
 from transaction import Transaction
 from libraries.custom_exceptions import InsufficientBalanceError, TransactionValidationError

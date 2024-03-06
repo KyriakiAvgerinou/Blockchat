@@ -3,7 +3,7 @@ from node import Node
 import pickle
 import config
 from libraries.custom_exceptions import InsufficientBalanceError, TransactionValidationError
-from libraries.module_library import retrieve_from_ring_node
+from libraries.functions_library import retrieve_from_ring_node
 
 # Init the current node.
 node = Node()

@@ -1,6 +1,6 @@
 from block import Block
 from libraries.custom_exceptions import BootstrapError
-from libraries.module_library import calculate_hash
+from libraries.functions_library import calculate_hash
 
 class Blockchain:
     """

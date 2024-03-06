@@ -6,7 +6,7 @@ from blockchain import Blockchain
 import socket
 import pickle
 import threading
-from libraries.module_library import make_get_request, make_post_request, standardize_transaction_input
+from libraries.functions_library import make_get_request, make_post_request, standardize_transaction_input
 from libraries.custom_exceptions import SessionInitializationError
 
 # Get the ip address and the port of the bootstrap node defined by the config file.

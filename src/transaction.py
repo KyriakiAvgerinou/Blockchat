@@ -1,4 +1,4 @@
-from libraries.module_library import calculate_hash, transaction_total_expenses
+from libraries.functions_library import calculate_hash, transaction_total_expenses
 from time import time
 import rsa
 
